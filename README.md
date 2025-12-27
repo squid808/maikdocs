@@ -37,16 +37,16 @@ By using maikdocs, you can reduce token usage by 70-90% when helping AI understa
 maikdocs automatically extracts documentation from your code, but the quality improves with good practices:
 
 ### Automatically Extracted (No User Action Required)
-✅ **Code structure** - Classes, functions, methods, constants
-✅ **Signatures** - Function parameters, type hints, return types
-✅ **Visibility** - Public vs private members (based on naming)
-✅ **File metadata** - Lines of code, last modified timestamps
-✅ **Project structure** - Directory hierarchy, module organization
+- **Code structure** - Classes, functions, methods, constants
+- **Signatures** - Function parameters, type hints, return types
+- **Visibility** - Public vs private members (based on naming)
+- **File metadata** - Lines of code, last modified timestamps
+- **Project structure** - Directory hierarchy, module organization
 
 ### Enhanced by Docstrings (Highly Recommended)
-📝 **Module docstrings** - Explain what each file does (first line used in summaries)
-📝 **Class docstrings** - Describe the class purpose
-📝 **Function docstrings** - Explain what functions do (first paragraph extracted)
+- **Module docstrings** - Explain what each file does (first line used in summaries)
+- **Class docstrings** - Describe the class purpose
+- **Function docstrings** - Explain what functions do (first paragraph extracted)
 
 **Example:**
 ```python
@@ -70,7 +70,7 @@ class Config:
 ```
 
 ### Optional User-Provided Context
-💡 **`.maik_meta.md` files** - Add custom descriptions for directories/modules
+- **`.maik_meta.md` files** - Add custom descriptions for directories/modules
 - Place in any directory alongside source files
 - maikdocs merges this content into `index_maik.md`
 - Useful for architectural notes, module purposes, design decisions
@@ -201,6 +201,23 @@ Each file gets a markdown doc with:
 
 ## Commands
 
+### Path Flexibility
+
+maikdocs commands accept both source paths and `.maik/` documentation paths interchangeably. The tool automatically translates between them:
+
+```bash
+# Use source file paths (recommended for simplicity)
+maikdocs read src/core/config.py
+
+# Or use .maik documentation paths (backwards compatible)
+maikdocs read .maik/src/core/config_maik.md
+
+# Folders automatically map to index files
+maikdocs read src/core/  # Reads .maik/src/core/index_maik.md
+```
+
+This works for any command that accepts file paths, making it easier to work with maikdocs without remembering the `.maik/` structure.
+
 ### `maikdocs init`
 Initialize configuration in a project directory.
 
@@ -234,13 +251,24 @@ Clean orphaned documentation files.
 ### `maikdocs read <file>`
 Read documentation file with optional symbol filtering.
 
+Supports both source paths and `.maik/` documentation paths - use whichever is more convenient.
+
 **Options:**
 - `--types, -t`: Filter by symbol types (classes, functions, methods, fields, description)
 
-**Example:**
+**Examples:**
 ```bash
-# Read only classes from a documentation file
-maikdocs read .maik/src/mypackage/module_maik.md --types classes
+# Read documentation using source path (simple!)
+maikdocs read src/mypackage/module.py
+
+# Or use .maik path (backwards compatible)
+maikdocs read .maik/src/mypackage/module_maik.md
+
+# Read only classes using source path
+maikdocs read src/mypackage/module.py --types classes
+
+# Read directory index (folder paths map to index_maik.md)
+maikdocs read src/mypackage/
 ```
 
 ### `maikdocs extract --file <file>`
@@ -387,3 +415,57 @@ Configuration loaded from .maikdocs.yaml.
   - Save configuration to YAML file.
 ...
 ```
+
+## Claude Skill Integration
+
+maikdocs includes a Claude Skill that teaches Claude Code to use maikdocs automatically for efficient codebase navigation.
+
+### What the Skill Does
+
+The skill is located in `.claude/skills/maikdocs/` and automatically:
+
+1. **Checks for documentation before expensive exploration** - If `.maik/` doesn't exist, Claude will generate it first to prevent 40k+ token source file reads
+2. **Reads hierarchically** - Starts with PROJECT.md, then indexes, then specific files
+3. **Uses filtering** - Reads only classes, functions, or specific symbol types as needed
+4. **Extracts targeted code** - Gets specific symbols instead of entire files
+5. **Auto-updates after changes** - Runs `maikdocs update` when signatures or symbols change
+
+### Using the Skill
+
+The skill is **model-invoked** (automatic). When you ask Claude to:
+- Understand a codebase
+- Make changes to code
+- Find specific functionality
+
+Claude will automatically use maikdocs to navigate efficiently, saving 70-90% of tokens.
+
+### Manual Commands
+
+You can still run maikdocs commands directly:
+```bash
+maikdocs generate --force  # Regenerate all docs
+maikdocs coverage          # Check documentation gaps
+maikdocs clean --all       # Remove all generated docs
+```
+
+### Expected Behavior
+
+**Scenario: "Understand this project"**
+- Claude checks for `.maik/` directory
+- If missing, generates docs first (saves 40k+ tokens)
+- Reads `.maik/PROJECT.md` for overview
+- Explores modules hierarchically as needed
+
+**Scenario: "Add authentication feature"**
+- Claude reads PROJECT.md to understand structure
+- Reads relevant index files to find auth module
+- Reads specific file docs for patterns
+- Extracts code only when implementing
+- Runs `maikdocs update` after adding new classes/functions
+
+### Skill Files
+
+- `.claude/skills/maikdocs/SKILL.md` - Main skill definition
+- `.claude/skills/maikdocs/reading-strategy.md` - Hierarchical navigation guide
+- `.claude/skills/maikdocs/auto-update-workflow.md` - When to update docs
+- `.claude/skills/maikdocs/examples.md` - Real-world usage scenarios

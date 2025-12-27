@@ -1,6 +1,7 @@
 """Python parser using pdoc."""
 
 import inspect
+import re
 from pathlib import Path
 from typing import Any
 
@@ -168,6 +169,62 @@ class PythonParser(LanguageParser):
 
         return " ".join(summary_lines) if summary_lines else None
 
+    def _clean_type_hint(self, annotation: Any) -> str:
+        """Clean type hint for better readability in documentation.
+
+        Extracts actual types from typing.Annotated and formats them cleanly.
+        Removes verbose module prefixes and uses modern type syntax.
+
+        Args:
+            annotation: Type annotation object from inspect
+
+        Returns:
+            Cleaned string representation of the type
+
+        Examples:
+            typing.Annotated[Optional[Path], metadata] -> Path | None
+            typing.Optional[list[str]] -> list[str] | None
+            pathlib.Path -> Path
+        """
+        import typing
+
+        # Handle typing.Annotated - extract just the first argument (the actual type)
+        if hasattr(typing, 'get_origin') and hasattr(typing, 'get_args'):
+            origin = typing.get_origin(annotation)
+            if origin is typing.Annotated:
+                # Get the actual type (first argument of Annotated)
+                args = typing.get_args(annotation)
+                if args:
+                    annotation = args[0]
+
+        # Convert to string
+        type_str = str(annotation)
+
+        # Clean up common verbose patterns
+        type_str = type_str.replace('typing.', '')
+        type_str = type_str.replace('pathlib.', '')
+
+        # Handle <class 'inspect._empty'> and similar
+        if type_str.startswith("<class '") and type_str.endswith("'>"):
+            # Extract just the class name
+            match = re.match(r"<class '(?:\w+\.)*(\w+)'>", type_str)
+            if match:
+                type_str = match.group(1)
+
+        # Convert Optional[X] to X | None (modern syntax)
+        optional_match = re.match(r'Optional\[(.+)\]$', type_str)
+        if optional_match:
+            inner_type = optional_match.group(1)
+            type_str = f'{inner_type} | None'
+
+        # Convert Union[X, None] to X | None
+        union_none_match = re.match(r'Union\[(.+), None\]$', type_str)
+        if union_none_match:
+            inner_type = union_none_match.group(1)
+            type_str = f'{inner_type} | None'
+
+        return type_str
+
     def _parse_function(self, func: pdoc.doc.Function) -> ParsedFunction:
         """Parse function/method from pdoc.
 
@@ -186,7 +243,7 @@ class PythonParser(LanguageParser):
 
                 type_hint = None
                 if param.annotation != inspect.Parameter.empty:
-                    type_hint = str(param.annotation)
+                    type_hint = self._clean_type_hint(param.annotation)
 
                 default = None
                 if param.default != inspect.Parameter.empty:
@@ -202,7 +259,7 @@ class PythonParser(LanguageParser):
         if func.signature:
             sig = inspect.signature(func.obj)
             if sig.return_annotation != inspect.Signature.empty:
-                return_type = str(sig.return_annotation)
+                return_type = self._clean_type_hint(sig.return_annotation)
 
         return ParsedFunction(
             name=func.name,
@@ -264,7 +321,7 @@ class PythonParser(LanguageParser):
         """
         type_hint = None
         if var.annotation:
-            type_hint = str(var.annotation)
+            type_hint = self._clean_type_hint(var.annotation)
 
         return ParsedAttribute(
             name=var.name,
@@ -286,7 +343,7 @@ class PythonParser(LanguageParser):
         """
         type_hint = None
         if var.annotation:
-            type_hint = str(var.annotation)
+            type_hint = self._clean_type_hint(var.annotation)
 
         return ParsedConstant(
             name=var.name,

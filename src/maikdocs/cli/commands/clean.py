@@ -8,6 +8,7 @@ from maikdocs.cli.commands.generate import _load_config
 from maikdocs.core.tracker import DocumentationTracker
 from maikdocs.filesystem.cleaner import DocumentationCleaner
 from maikdocs.filesystem.scanner import FileSystemScanner
+from maikdocs.utils.path_translator import PathTranslator
 
 console = Console()
 
@@ -75,21 +76,10 @@ def clean_command(
     else:
         console.print(f"\n[green]✓ Removed {len(deleted)} orphaned files[/green]")
 
+        translator = PathTranslator(config)
         for orphan in orphaned:
-            source_path = _doc_to_source(orphan, config)
+            source_path = translator.doc_to_source(orphan)
             if source_path:
                 tracker.remove_file(source_path)
 
         tracker.save_state()
-
-
-def _doc_to_source(doc_path, config):
-    """Convert doc path to source path."""
-    try:
-        relative = doc_path.relative_to(
-            config.project_root / config.output_folder
-        )
-        source_name = doc_path.stem.replace("_maik", "") + ".py"
-        return config.project_root / relative.parent / source_name
-    except ValueError:
-        return None

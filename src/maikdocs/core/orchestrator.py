@@ -11,6 +11,7 @@ from maikdocs.generators.index_doc import IndexDocumentationGenerator
 from maikdocs.generators.project_doc import ProjectDocumentationGenerator
 from maikdocs.parsers.base import ParserRegistry, ParsedModule
 from maikdocs.parsers.python_parser import PythonParser
+from maikdocs.utils.path_translator import PathTranslator
 
 
 @dataclass
@@ -186,12 +187,13 @@ class BuildOrchestrator:
 
         if not preserve:
             orphaned = self.tracker.get_orphaned_docs(current_sources)
+            translator = PathTranslator(self.config)
             for orphan in orphaned:
                 try:
                     orphan.unlink()
                     result.add_removed(orphan)
 
-                    source_path = self._doc_to_source(orphan)
+                    source_path = translator.doc_to_source(orphan)
                     if source_path:
                         self.tracker.remove_file(source_path)
 
@@ -214,28 +216,6 @@ class BuildOrchestrator:
         self.tracker.save_state()
 
         return result
-
-    def _doc_to_source(self, doc_path: Path) -> Path | None:
-        """Convert documentation path back to source path.
-
-        Args:
-            doc_path: Documentation file path
-
-        Returns:
-            Source file path or None if cannot determine
-        """
-        try:
-            relative = doc_path.relative_to(
-                self.config.project_root / self.config.output_folder
-            )
-
-            source_name = doc_path.stem.replace("_maik", "") + ".py"
-            source_path = self.config.project_root / relative.parent / source_name
-
-            return source_path if source_path.exists() else None
-
-        except ValueError:
-            return None
 
     def _get_directory_modules(
         self,
