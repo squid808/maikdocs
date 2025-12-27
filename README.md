@@ -32,6 +32,71 @@ maikdocs works best when:
 
 By using maikdocs, you can reduce token usage by 70-90% when helping AI understand your codebase, while providing better context through structured summaries.
 
+## What Gets Documented (and What You Need to Provide)
+
+maikdocs automatically extracts documentation from your code, but the quality improves with good practices:
+
+### Automatically Extracted (No User Action Required)
+✅ **Code structure** - Classes, functions, methods, constants
+✅ **Signatures** - Function parameters, type hints, return types
+✅ **Visibility** - Public vs private members (based on naming)
+✅ **File metadata** - Lines of code, last modified timestamps
+✅ **Project structure** - Directory hierarchy, module organization
+
+### Enhanced by Docstrings (Highly Recommended)
+📝 **Module docstrings** - Explain what each file does (first line used in summaries)
+📝 **Class docstrings** - Describe the class purpose
+📝 **Function docstrings** - Explain what functions do (first paragraph extracted)
+
+**Example:**
+```python
+"""Configuration management for the application.
+
+This module handles loading, validating, and saving configuration
+from YAML files using Pydantic models.
+"""
+
+class Config:
+    """Application configuration with validation.
+
+    Loads settings from .config.yaml and validates all required fields.
+    """
+    def load(self, path: Path) -> None:
+        """Load configuration from YAML file.
+
+        Args:
+            path: Path to configuration file
+        """
+```
+
+### Optional User-Provided Context
+💡 **`.maik_meta.md` files** - Add custom descriptions for directories/modules
+- Place in any directory alongside source files
+- maikdocs merges this content into `index_maik.md`
+- Useful for architectural notes, module purposes, design decisions
+
+**Example** - `src/core/.maik_meta.md`:
+```markdown
+## Core Module
+
+This module contains the fundamental building blocks of the application.
+All other modules depend on the abstractions defined here.
+
+**Design principle:** Keep this module dependency-free to maintain
+a clean architecture.
+```
+
+### What Happens When Documentation is Missing?
+
+| Missing Element | Result |
+|----------------|---------|
+| No module docstring | File listed without description in index |
+| No function docstring | Function signature shown, no explanation |
+| No `.maik_meta.md` | Index contains only file listings |
+| No type hints | Shows as `typing.Any` or no type info |
+
+**Use `maikdocs coverage`** to find missing documentation and improve your docs!
+
 ## Current Language Support:
 
 - Python (via [`pdoc`](https://github.com/mitmproxy/pdoc/))
@@ -132,7 +197,7 @@ Each file gets a markdown doc with:
 - Classes with methods and attributes
 - Functions with parameters and return types
 - Constants and module attributes
-- Visibility markers (🔓 public / 🔒 private)
+- Visibility markers (PUBLIC / PRIVATE)
 
 ## Commands
 
@@ -311,14 +376,14 @@ Configuration management for maikdocs.
 
 Inherits from: `BaseModel`
 
-Visibility: 🔓 public
+Visibility: PUBLIC
 
 Configuration loaded from .maikdocs.yaml.
 
 **Methods:**
-- 🔓 `load(path: Path) -> MaikDocsConfig`
+- PUBLIC `load(path: Path) -> MaikDocsConfig`
   - Load configuration from YAML file.
-- 🔓 `save(path: Path) -> None`
+- PUBLIC `save(path: Path) -> None`
   - Save configuration to YAML file.
 ...
 ```

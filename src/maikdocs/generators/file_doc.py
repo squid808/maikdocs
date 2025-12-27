@@ -90,7 +90,7 @@ class FileDocumentationGenerator:
                 bases = ", ".join(f"`{b}`" for b in cls.base_classes)
                 lines.append(f"\nInherits from: {bases}")
 
-            visibility_marker = "🔒" if cls.visibility == "private" else "🔓"
+            visibility_marker = "PRIVATE" if cls.visibility == "private" else "PUBLIC"
             lines.append(f"\nVisibility: {visibility_marker} {cls.visibility}")
 
             if cls.docstring_summary:
@@ -99,7 +99,7 @@ class FileDocumentationGenerator:
             if cls.methods:
                 lines.append("\n**Methods:**")
                 for method in cls.methods:
-                    vis_marker = "🔒" if method.visibility == "private" else "🔓"
+                    vis_marker = "PRIVATE" if method.visibility == "private" else "PUBLIC"
                     sig = self._format_signature(method)
                     lines.append(f"- {vis_marker} `{sig}`")
                     if method.docstring_summary:
@@ -108,7 +108,7 @@ class FileDocumentationGenerator:
             if cls.attributes:
                 lines.append("\n**Attributes:**")
                 for attr in cls.attributes:
-                    vis_marker = "🔒" if attr.visibility == "private" else "🔓"
+                    vis_marker = "PRIVATE" if attr.visibility == "private" else "PUBLIC"
                     lines.append(f"- {vis_marker} `{attr.signature}`")
                     if attr.docstring_summary:
                         lines.append(f"  - {attr.docstring_summary}")
@@ -127,7 +127,7 @@ class FileDocumentationGenerator:
         lines = ["## Functions"]
 
         for func in functions:
-            vis_marker = "🔒" if func.visibility == "private" else "🔓"
+            vis_marker = "PRIVATE" if func.visibility == "private" else "PUBLIC"
             sig = self._format_signature(func)
             lines.append(f"\n### {vis_marker} `{sig}`")
 
@@ -161,7 +161,7 @@ class FileDocumentationGenerator:
         lines = ["## Constants"]
 
         for const in constants:
-            vis_marker = "🔒" if const.visibility == "private" else "🔓"
+            vis_marker = "PRIVATE" if const.visibility == "private" else "PUBLIC"
             lines.append(f"\n### {vis_marker} `{const.name}`")
 
             if const.type_hint:
@@ -184,7 +184,7 @@ class FileDocumentationGenerator:
         lines = ["## Module Attributes"]
 
         for attr in attributes:
-            vis_marker = "🔒" if attr.visibility == "private" else "🔓"
+            vis_marker = "PRIVATE" if attr.visibility == "private" else "PUBLIC"
             lines.append(f"\n### {vis_marker} `{attr.name}`")
 
             if attr.type_hint:
