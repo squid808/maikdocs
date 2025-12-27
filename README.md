@@ -1,6 +1,8 @@
-# maikdocs
+<div align="center">
+  <img src="assets/maikdocs_logo.png" alt="maikdocs logo" width="400">
 
-AI-friendly documentation generator for Python codebases.
+  <h3>AI-friendly documentation generator for Python codebases</h3>
+</div>
 
 ## What is maikdocs?
 
