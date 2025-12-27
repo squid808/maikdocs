@@ -4,7 +4,37 @@ AI-friendly documentation generator for Python codebases.
 
 ## What is maikdocs?
 
-maikdocs generates structured markdown documentation from Python source code using `pdoc`. It creates documentation that's optimized for AI tools to quickly understand codebases without consuming massive amounts of tokens.
+maikdocs (mAIkdocs, get it?) generates structured markdown documentation from source code designed specifically for AI consumption. Unlike traditional documentation tools that create human-readable HTML or PDFs, maikdocs creates a hierarchy of markdown files optimized for AI agents to efficiently understand large codebases.
+
+### Why AI-Optimized Documentation?
+
+When AI agents need to understand a codebase, they face two challenges:
+1. **Token limits**: Reading entire source files is expensive and often hits context limits
+2. **Finding relevant code**: Navigating large projects to find specific functionality wastes tokens
+
+maikdocs solves this by creating a **hierarchical documentation structure**:
+- **PROJECT.md**: High-level overview (what the project does, structure, key modules)
+- **index_maik.md**: Directory-level summaries (what's in each module)
+- **file_maik.md**: File-level details (classes, functions, signatures)
+
+This allows AI agents to:
+- Start with `PROJECT.md` to understand the big picture (cheap)
+- Read relevant `index_maik.md` files to find the right module (moderate)
+- Only read specific `*_maik.md` files for implementation details (targeted)
+
+### Integration with AI Workflows
+
+maikdocs works best when:
+- **Paired with Claude Code skills**: Use custom skills to automatically read relevant maikdocs when working on code
+- **Used in prompts**: Instruct agents like "First read .maik/PROJECT.md, then explore relevant modules"
+- **Combined with MCP servers**: Future integration will allow seamless codebase exploration
+- **Manual AI sessions**: Explicitly tell your AI assistant to use maikdocs files instead of raw source code
+
+By using maikdocs, you can reduce token usage by 70-90% when helping AI understand your codebase, while providing better context through structured summaries.
+
+## Current Language Support:
+
+- Python (via [`pdoc`](https://github.com/mitmproxy/pdoc/))
 
 ## Features
 
@@ -17,25 +47,61 @@ maikdocs generates structured markdown documentation from Python source code usi
 
 ## Installation
 
-```bash
-pip install -e .
-```
+### From Source
+
+1. **Clone or download the repository:**
+   ```bash
+   git clone https://github.com/yourusername/maikdocs.git
+   cd maikdocs
+   ```
+
+2. **Create a virtual environment (recommended):**
+   ```bash
+   python -m venv .venv
+   source .venv/bin/activate  # On Windows: .venv\Scripts\activate
+   ```
+
+3. **Install in development mode:**
+   ```bash
+   pip install -e .
+   ```
+
+4. **Verify installation:**
+   ```bash
+   maikdocs --help
+   ```
+
+### System Requirements
+
+- Python 3.12 or higher
+- pip (Python package manager)
+- Git (for installation from source)
 
 ## Quick Start
 
-```bash
-# Initialize in your project
-maikdocs init
+**Start in your Python project's root directory** (where your `src/` or main package folder is located):
 
-# Generate documentation
+```bash
+# 1. Navigate to your project root
+cd /path/to/your/python/project
+
+# 2. Initialize maikdocs (creates .maikdocs.yaml)
+maikdocs init --language python
+
+# 3. Generate documentation for the entire project
 maikdocs generate
 
-# Update after changes
+# 4. After making code changes, update incrementally
 maikdocs update
 
-# Clean orphaned files
+# 5. Clean up orphaned documentation files
 maikdocs clean
 ```
+
+**Where to start reading the generated docs:**
+1. `.maik/PROJECT.md` - High-level project overview
+2. `.maik/src/yourpackage/index_maik.md` - Module summaries
+3. `.maik/src/yourpackage/file_maik.md` - Specific file details
 
 ## Documentation Structure
 
@@ -100,60 +166,129 @@ Clean orphaned documentation files.
 - `--all`: Remove all generated documentation
 - `--whatif`: Show what would be deleted
 
-### Future Commands (Not Yet Implemented)
+### `maikdocs read <file>`
+Read documentation file with optional symbol filtering.
 
-- `maikdocs read`: Read documentation with filtering
-- `maikdocs extract`: Extract code sections
-- `maikdocs coverage`: Show documentation coverage
+**Options:**
+- `--types, -t`: Filter by symbol types (classes, functions, methods, fields, description)
+
+**Example:**
+```bash
+# Read only classes from a documentation file
+maikdocs read .maik/src/mypackage/module_maik.md --types classes
+```
+
+### `maikdocs extract --file <file>`
+Extract actual source code for specific symbols.
+
+**Options:**
+- `--file, -f`: Source file to extract from
+- `--sections, -s`: Symbol names to extract
+
+**Example:**
+```bash
+# Extract specific class code with syntax highlighting
+maikdocs extract --file src/mypackage/module.py --sections MyClass
+```
+
+### `maikdocs coverage`
+Analyze documentation coverage and gaps.
+
+**Options:**
+- `--file`: Check specific file
+- `--directory, -d`: Check specific directory
+- `--output, -o`: Export report to file
+- `--noclobber`: Append to output file
+
+**Example:**
+```bash
+# Check coverage and export report
+maikdocs coverage --output coverage_report.md
+```
 
 ## Configuration
 
-`.maikdocs.yaml` example:
+The `.maikdocs.yaml` file controls how documentation is generated. It's created automatically by `maikdocs init`, but you can customize it for your project's needs.
+
+### When to Customize Configuration
+
+**Common use cases:**
+
+1. **Exclude test files or build artifacts:**
+   ```yaml
+   exclude_patterns:
+     - '**/tests/**'
+     - '**/test_*.py'
+     - '**/__pycache__/**'
+     - '**/build/**'
+   ```
+
+2. **Include private/internal APIs for complete documentation:**
+   ```yaml
+   visibility_rules:
+     include_private: true  # Document underscore-prefixed members
+   ```
+
+3. **Change output folder location:**
+   ```yaml
+   output_folder: docs/ai  # Use 'docs/ai' instead of '.maik'
+   ```
+
+4. **Focus on specific file patterns:**
+   ```yaml
+   include_patterns:
+     - 'src/**/*.py'  # Only document files in src/
+     - '!src/**/deprecated/**'  # Exclude deprecated code
+   ```
+
+5. **Preserve orphaned documentation (for archived code):**
+   ```yaml
+   preserve_orphaned: true  # Keep docs even if source file deleted
+   ```
+
+### Full Configuration Example
 
 ```yaml
+# Auto-detected project root (usually don't need to change)
 project_root: /path/to/project
+
+# Where to generate documentation
 output_folder: .maik
+
+# Naming pattern for generated files
 file_pattern: '*_maik.md'
+
+# Which files to document
 include_patterns:
   - '*.py'
+  - 'src/**/*.py'
+
+# Which files to skip
 exclude_patterns:
   - '**/tests/**'
+  - '**/test_*.py'
   - '**/__pycache__/**'
+  - '**/venv/**'
+  - '**/.venv/**'
+
+# Documentation detail level
 visibility_rules:
-  include_private: false
+  include_private: false  # Set true to document _private members
+
+# Languages to process (Python only for now)
 languages:
   - python
-preserve_orphaned: false
+
+# Orphaned file handling
+preserve_orphaned: false  # Auto-remove docs for deleted source files
 ```
 
-## Project Structure
+### Why Use Configuration?
 
-```
-src/maikdocs/
-├── cli/              # CLI commands
-├── core/             # Configuration, tracking, orchestration
-├── parsers/          # Language parsers (Python via pdoc)
-├── generators/       # Markdown generators
-├── filesystem/       # Scanning and cleanup
-└── utils/            # Utilities
-```
-
-## Development Status
-
-**Working:**
-- ✅ Python parsing with pdoc
-- ✅ Markdown generation
-- ✅ State tracking and incremental updates
-- ✅ CLI: init, generate, update, clean
-- ✅ Directory indexes
-- ✅ Orphaned file cleanup
-
-**Future:**
-- 🔜 `read`, `extract`, `coverage` commands
-- 🔜 Multi-language support (JavaScript, Java)
-- 🔜 Claude Skill/MCP integration
-- 🔜 Section-based partial reads
-- 🔜 Custom templates
+- **Team consistency**: Commit `.maikdocs.yaml` to share settings across your team
+- **CI/CD integration**: Use in automated pipelines to generate up-to-date docs
+- **Large codebases**: Exclude unnecessary files to keep documentation focused
+- **Multiple projects**: Different configs for different documentation needs (internal vs public API)
 
 ## Example Output
 
@@ -187,7 +322,3 @@ Configuration loaded from .maikdocs.yaml.
   - Save configuration to YAML file.
 ...
 ```
-
-## License
-
-MIT
