@@ -66,6 +66,10 @@ class FileDocumentationGenerator:
         if parsed.docstring_summary:
             lines.append(f"\n{parsed.docstring_summary}")
 
+        # Show container information (language-agnostic)
+        if parsed.container_type and parsed.container_name:
+            lines.append(f"\n**{parsed.container_type.title()}:** `{parsed.container_name}`")
+
         exports = parsed.get_public_exports()
         if exports:
             lines.append(f"\n**Public exports:** {', '.join(f'`{e}`' for e in exports)}")
@@ -90,8 +94,17 @@ class FileDocumentationGenerator:
                 bases = ", ".join(f"`{b}`" for b in cls.base_classes)
                 lines.append(f"\nInherits from: {bases}")
 
-            visibility_marker = "PRIVATE" if cls.visibility == "private" else "PUBLIC"
-            lines.append(f"\nVisibility: {visibility_marker} {cls.visibility}")
+            # Show symbol type if not default "class"
+            if cls.symbol_type != "class":
+                lines.append(f"\n**Type:** {cls.symbol_type.title()}")
+
+            # Show modifiers if any
+            if cls.modifiers:
+                mods = ", ".join(cls.modifiers)
+                lines.append(f"\n**Modifiers:** {mods}")
+
+            visibility_marker = cls.visibility.upper()
+            lines.append(f"\nVisibility: {visibility_marker}")
 
             if cls.docstring_summary:
                 lines.append(f"\n{cls.docstring_summary}")
@@ -99,17 +112,28 @@ class FileDocumentationGenerator:
             if cls.methods:
                 lines.append("\n**Methods:**")
                 for method in cls.methods:
-                    vis_marker = "PRIVATE" if method.visibility == "private" else "PUBLIC"
+                    vis_marker = method.visibility.upper()
                     sig = self._format_signature(method)
-                    lines.append(f"- {vis_marker} `{sig}`")
+                    method_line = f"- {vis_marker} `{sig}`"
+                    # Add modifiers if any
+                    if method.modifiers:
+                        method_line += f" [{', '.join(method.modifiers)}]"
+                    # Add symbol type if not default "function"
+                    if method.symbol_type != "function":
+                        method_line += f" ({method.symbol_type})"
+                    lines.append(method_line)
                     if method.docstring_summary:
                         lines.append(f"  - {method.docstring_summary}")
 
             if cls.attributes:
                 lines.append("\n**Attributes:**")
                 for attr in cls.attributes:
-                    vis_marker = "PRIVATE" if attr.visibility == "private" else "PUBLIC"
-                    lines.append(f"- {vis_marker} `{attr.signature}`")
+                    vis_marker = attr.visibility.upper()
+                    attr_line = f"- {vis_marker} `{attr.signature}`"
+                    # Add modifiers if any
+                    if attr.modifiers:
+                        attr_line += f" [{', '.join(attr.modifiers)}]"
+                    lines.append(attr_line)
                     if attr.docstring_summary:
                         lines.append(f"  - {attr.docstring_summary}")
 
@@ -127,9 +151,18 @@ class FileDocumentationGenerator:
         lines = ["## Functions"]
 
         for func in functions:
-            vis_marker = "PRIVATE" if func.visibility == "private" else "PUBLIC"
+            vis_marker = func.visibility.upper()
             sig = self._format_signature(func)
             lines.append(f"\n### {vis_marker} `{sig}`")
+
+            # Show symbol type if not default "function"
+            if func.symbol_type != "function":
+                lines.append(f"\n**Type:** {func.symbol_type.title()}")
+
+            # Show modifiers if any
+            if func.modifiers:
+                mods = ", ".join(func.modifiers)
+                lines.append(f"\n**Modifiers:** {mods}")
 
             if func.docstring_summary:
                 lines.append(f"\n{func.docstring_summary}")
@@ -161,11 +194,16 @@ class FileDocumentationGenerator:
         lines = ["## Constants"]
 
         for const in constants:
-            vis_marker = "PRIVATE" if const.visibility == "private" else "PUBLIC"
+            vis_marker = const.visibility.upper()
             lines.append(f"\n### {vis_marker} `{const.name}`")
 
             if const.type_hint:
                 lines.append(f"\nType: `{const.type_hint}`")
+
+            # Show modifiers if any
+            if const.modifiers:
+                mods = ", ".join(const.modifiers)
+                lines.append(f"\n**Modifiers:** {mods}")
 
             if const.docstring_summary:
                 lines.append(f"\n{const.docstring_summary}")
@@ -184,11 +222,16 @@ class FileDocumentationGenerator:
         lines = ["## Module Attributes"]
 
         for attr in attributes:
-            vis_marker = "PRIVATE" if attr.visibility == "private" else "PUBLIC"
+            vis_marker = attr.visibility.upper()
             lines.append(f"\n### {vis_marker} `{attr.name}`")
 
             if attr.type_hint:
                 lines.append(f"\nType: `{attr.type_hint}`")
+
+            # Show modifiers if any
+            if attr.modifiers:
+                mods = ", ".join(attr.modifiers)
+                lines.append(f"\n**Modifiers:** {mods}")
 
             if attr.docstring_summary:
                 lines.append(f"\n{attr.docstring_summary}")

@@ -72,7 +72,7 @@ def coverage_command(
         else:
             report.documented_files += 1
 
-        missing = _check_missing_docstrings(source)
+        missing = _check_missing_docstrings(source, orchestrator)
         if missing:
             report.missing_docstrings.extend((source, item) for item in missing)
 
@@ -82,20 +82,22 @@ def coverage_command(
         _write_report(report, output, noclobber)
 
 
-def _check_missing_docstrings(source_path: Path) -> list[str]:
+def _check_missing_docstrings(source_path: Path, orchestrator: BuildOrchestrator) -> list[str]:
     """Check for missing docstrings in source file.
 
     Args:
         source_path: Path to source file
+        orchestrator: Build orchestrator with parser registry
 
     Returns:
         List of items missing docstrings
     """
     try:
-        from maikdocs.core.config import VisibilityRules
-        from maikdocs.parsers.python_parser import PythonParser
+        # Get appropriate parser from registry
+        parser = orchestrator.parser_registry.get_parser(source_path)
+        if not parser:
+            return []
 
-        parser = PythonParser(VisibilityRules())
         parsed = parser.parse(source_path)
 
         missing = []

@@ -1,10 +1,9 @@
 """Configuration management for maikdocs."""
 
 from pathlib import Path
-from typing import Literal
 
 import yaml
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, field_validator
 
 
 class VisibilityRules(BaseModel):
@@ -31,14 +30,20 @@ class MaikDocsConfig(BaseModel):
         description="Patterns for files to exclude"
     )
     visibility_rules: VisibilityRules = Field(default_factory=VisibilityRules)
-    languages: list[Literal["python"]] = Field(
+    languages: list[str] = Field(
         default_factory=lambda: ["python"],
-        description="Languages to document"
+        description="Languages to document (python, javascript, typescript, java, go, rust, etc.)"
     )
     preserve_orphaned: bool = Field(
         default=False,
         description="Keep documentation for deleted source files"
     )
+
+    @field_validator('languages')
+    @classmethod
+    def validate_languages(cls, v: list[str]) -> list[str]:
+        """Ensure language names are lowercase."""
+        return [lang.lower() for lang in v]
 
     @classmethod
     def load(cls, path: Path) -> "MaikDocsConfig":

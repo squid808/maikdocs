@@ -28,7 +28,14 @@ class PathTranslator:
     # Extension mapping for supported languages
     EXTENSION_MAP: dict[str, str] = {
         "python": ".py",
-        # Future: "javascript": ".js", "typescript": ".ts", etc.
+        "javascript": ".js",
+        "typescript": ".ts",
+        "java": ".java",
+        "go": ".go",
+        "rust": ".rs",
+        "csharp": ".cs",
+        "cpp": ".cpp",
+        "c": ".c",
     }
 
     def __init__(self, config: MaikDocsConfig):

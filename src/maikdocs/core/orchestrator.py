@@ -1,5 +1,7 @@
 """Build orchestration for documentation generation."""
 
+import importlib
+import pkgutil
 from dataclasses import dataclass, field
 from pathlib import Path
 
@@ -9,8 +11,7 @@ from maikdocs.filesystem.scanner import FileSystemScanner
 from maikdocs.generators.file_doc import FileDocumentationGenerator
 from maikdocs.generators.index_doc import IndexDocumentationGenerator
 from maikdocs.generators.project_doc import ProjectDocumentationGenerator
-from maikdocs.parsers.base import ParserRegistry, ParsedModule
-from maikdocs.parsers.python_parser import PythonParser
+from maikdocs.parsers.base import ParserRegistry, ParsedModule, LanguageParser
 from maikdocs.utils.path_translator import PathTranslator
 
 
@@ -72,9 +73,36 @@ class BuildOrchestrator:
         self._register_parsers()
 
     def _register_parsers(self) -> None:
-        """Register available parsers."""
-        python_parser = PythonParser(self.config.visibility_rules)
-        self.parser_registry.register(python_parser)
+        """Auto-discover and register all available parsers.
+
+        Scans the maikdocs.parsers package for LanguageParser subclasses
+        and registers them automatically. No hardcoded language lists!
+        """
+        # Import parsers package
+        parser_package = importlib.import_module('maikdocs.parsers')
+
+        # Find all parser modules
+        for _, module_name, _ in pkgutil.iter_modules(parser_package.__path__):
+            if module_name == 'base':
+                continue
+
+            try:
+                # Import the parser module
+                module = importlib.import_module(f'maikdocs.parsers.{module_name}')
+
+                # Find LanguageParser subclasses
+                for attr_name in dir(module):
+                    attr = getattr(module, attr_name)
+                    if (isinstance(attr, type) and
+                        issubclass(attr, LanguageParser) and
+                        attr != LanguageParser):
+
+                        # Instantiate and register
+                        parser = attr(self.config.visibility_rules)
+                        self.parser_registry.register(parser)
+            except Exception as e:
+                # Skip parsers that fail to load (missing dependencies, etc.)
+                continue
 
     def generate_all(
         self,
