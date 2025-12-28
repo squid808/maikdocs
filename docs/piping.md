@@ -22,9 +22,9 @@ maikdocs extract --file src/utils/helpers.py --sections format_text
 ```
 
 **Why use source paths:**
-- ✅ Simpler - use the paths you already know
-- ✅ Clearer - matches your mental model
-- ✅ IDE-friendly - can copy paths from file explorer
+- Simpler - use the paths you already know
+- Clearer - matches your mental model
+- IDE-friendly - can copy paths from file explorer
 
 ### .maik Paths (Backwards Compatible)
 
@@ -37,9 +37,9 @@ maikdocs extract --file src/core/config.py --sections MaikDocsConfig
 ```
 
 **When to use .maik paths:**
-- ✅ Backwards compatibility with older scripts
-- ✅ Explicit documentation file references
-- ✅ Shell completion on .maik/ directory
+- Backwards compatibility with older scripts
+- Explicit documentation file references
+- Shell completion on .maik/ directory
 
 ---
 
@@ -171,10 +171,10 @@ maikdocs clean --all --whatif
 ```
 
 **Use cases:**
-- ✅ Validating include/exclude patterns
-- ✅ Checking impact before regeneration
-- ✅ Understanding orphaned files
-- ✅ CI/CD verification steps
+- Validating include/exclude patterns
+- Checking impact before regeneration
+- Understanding orphaned files
+- CI/CD verification steps
 
 ---
 
@@ -242,12 +242,12 @@ fi
 # Fail CI if docs are out of date
 maikdocs update --whatif
 if [ $? -ne 0 ]; then
-    echo "❌ Documentation is out of date!"
+    echo "Documentation is out of date!"
     echo "Run 'maikdocs update' and commit the changes."
     exit 1
 fi
 
-echo "✅ Documentation is up to date"
+echo "Documentation is up to date"
 ```
 
 ---
@@ -317,7 +317,7 @@ for project in "${PROJECTS[@]}"; do
     echo "Updating $project..."
     cd "$project"
     maikdocs update
-    echo "✅ $project updated"
+    echo "$project updated"
 done
 ```
 

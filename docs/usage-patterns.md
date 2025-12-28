@@ -122,13 +122,13 @@ maikdocs extract -f src/auth/manager.py -s AuthManager
    Run only if you changed signatures or added new symbols
 
 **When to update docs:**
-- ✅ **DO update for:**
+- **DO update for:**
   - New classes, functions, methods
   - Signature changes (parameters, return types)
   - Docstring additions or modifications
   - New files created
 
-- ❌ **DON'T update for:**
+- **DON'T update for:**
   - Implementation-only changes (inside function bodies)
   - Formatting or whitespace
   - Comments (not docstrings)

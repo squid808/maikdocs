@@ -361,14 +361,14 @@ Coverage: 98%
 maikdocs coverage --directory src/core/
 ```
 
-**Result:** 100% coverage in core ✅
+**Result:** 100% coverage in core 
 
 ```bash
 # Check parsers
 maikdocs coverage --directory src/parsers/
 ```
 
-**Result:** 100% coverage in parsers ✅
+**Result:** 100% coverage in parsers 
 
 ### Step 3: Fix Missing Docstrings
 

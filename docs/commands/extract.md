@@ -68,18 +68,18 @@ maikdocs extract -f src/core/orchestrator.py -s Orchestrator
 ## Read vs Extract
 
 **When to use `read`:**
-- ✅ Understanding structure and architecture
-- ✅ Finding available classes/functions
-- ✅ Checking signatures and parameters
-- ✅ Reading docstrings and API docs
-- ✅ Saving tokens (documentation is much shorter)
+- Understanding structure and architecture
+- Finding available classes/functions
+- Checking signatures and parameters
+- Reading docstrings and API docs
+- Saving tokens (documentation is much shorter)
 
 **When to use `extract`:**
-- ✅ Need to see actual implementation logic
-- ✅ Understanding algorithms or complex code
-- ✅ Debugging specific behavior
-- ✅ Copying code patterns
-- ✅ After using `read` to identify the right symbol
+- Need to see actual implementation logic
+- Understanding algorithms or complex code
+- Debugging specific behavior
+- Copying code patterns
+- After using `read` to identify the right symbol
 
 ## Typical Workflow
 

@@ -79,20 +79,20 @@ maikdocs update                  # Update remaining docs
 ## When to Use Clean
 
 **Use `clean` when:**
-- ✅ Source files have been deleted or moved
-- ✅ Refactoring changed project structure
-- ✅ Documentation directory has old/stale files
-- ✅ Preparing to regenerate everything
+- Source files have been deleted or moved
+- Refactoring changed project structure
+- Documentation directory has old/stale files
+- Preparing to regenerate everything
 
 **Use `clean --all` when:**
-- ✅ Starting completely fresh
-- ✅ Troubleshooting documentation issues
-- ✅ Archiving or removing maikdocs from project
-- ✅ Switching to different output folder
+- Starting completely fresh
+- Troubleshooting documentation issues
+- Archiving or removing maikdocs from project
+- Switching to different output folder
 
 **Avoid when:**
-- ❌ Just updating code (use `update` instead)
-- ❌ Unsure about orphaned files (use `--whatif` first)
+- Just updating code (use `update` instead)
+- Unsure about orphaned files (use `--whatif` first)
 
 ## Related Commands
 

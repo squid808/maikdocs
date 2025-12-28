@@ -22,10 +22,10 @@ maikdocs is built with a **language-agnostic architecture** designed for easy ex
 **Only one component:** A language parser class
 
 **What you DON'T need to implement:**
-- ❌ Documentation generators (already abstract)
-- ❌ Configuration changes (accepts any language string)
-- ❌ Orchestration logic (automatically discovers parsers)
-- ❌ File tracking (language-agnostic)
+- Documentation generators (already abstract)
+- Configuration changes (accepts any language string)
+- Orchestration logic (automatically discovers parsers)
+- File tracking (language-agnostic)
 
 ---
 

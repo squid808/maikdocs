@@ -13,9 +13,9 @@ Efficient codebase understanding using AI-optimized documentation.
 **STOP** before reading source files during exploration or code discovery.
 
 **DO NOT use these tools on source files during exploration:**
-- ❌ Read tool on .py/.js/.ts/.java files (costs 1000-2000 tokens each)
-- ❌ Grep to search for functions/classes in code (maikdocs has this info)
-- ❌ Glob followed by reading multiple files (use maikdocs hierarchy instead)
+- Read tool on .py/.js/.ts/.java files (costs 1000-2000 tokens each)
+- Grep to search for functions/classes in code (maikdocs has this info)
+- Glob followed by reading multiple files (use maikdocs hierarchy instead)
 
 **ALWAYS use maikdocs first:**
 1. Check if `.maik/` exists
@@ -26,8 +26,8 @@ Efficient codebase understanding using AI-optimized documentation.
 6. Only then extract specific code or read targeted source files if needed
 
 **Token comparison:**
-- ❌ Reading 10 source files: 15,000 tokens
-- ✅ Using maikdocs: 235 tokens (98% savings)
+- Reading 10 source files: 15,000 tokens
+- Using maikdocs: 235 tokens (98% savings)
 
 ## When Should I Use Maikdocs?
 

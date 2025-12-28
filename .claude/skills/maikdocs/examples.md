@@ -15,7 +15,7 @@ Real-world scenarios for using maikdocs efficiently.
 Total: 4000 tokens - and still don't have full picture!
 ```
 
-**✅ CORRECT (Claude uses maikdocs first):**
+**CORRECT (Claude uses maikdocs first):**
 ```
 1. Check for .maik/ directory
    - If missing: maikdocs init && maikdocs generate
@@ -30,9 +30,9 @@ Total: 85 tokens (98% reduction!)
 ```
 
 **Why this matters:**
-- ✅ Complete understanding with 98% fewer tokens
-- ✅ Hierarchical view instead of file-by-file discovery
-- ✅ Can always drill down later if needed
+- Complete understanding with 98% fewer tokens
+- Hierarchical view instead of file-by-file discovery
+- Can always drill down later if needed
 
 ## Scenario 2: Find Authentication Logic
 

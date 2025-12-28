@@ -138,7 +138,7 @@ visibility_rules:
 
 ## Documentation
 
-📚 **[Full Documentation](docs/index.md)**
+**[Full Documentation](docs/index.md)**
 
 **Getting Started:**
 - [Installation Guide](docs/installation.md) - CLI + Skill setup
@@ -152,13 +152,13 @@ visibility_rules:
 
 ## Features
 
-- ✅ **Multi-language architecture** - Auto-discovery, generic data model, abstract generators
-- ✅ **Smart incremental updates** - Only regenerates changed files
-- ✅ **AI-optimized format** - Structured markdown with standard headers
-- ✅ **Visibility control** - Filter public/private members
-- ✅ **State tracking** - Detects changes and orphaned files
-- ✅ **Path flexibility** - Use source paths or .maik paths interchangeably
-- ✅ **Claude Code Skill** - Automatic AI integration
+- **Multi-language architecture** - Auto-discovery, generic data model, abstract generators
+- **Smart incremental updates** - Only regenerates changed files
+- **AI-optimized format** - Structured markdown with standard headers
+- **Visibility control** - Filter public/private members
+- **State tracking** - Detects changes and orphaned files
+- **Path flexibility** - Use source paths or .maik paths interchangeably
+- **Claude Code Skill** - Automatic AI integration
 
 ## License
 

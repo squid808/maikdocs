@@ -80,16 +80,16 @@ maikdocs update src/auth/manager.py
 ## When to Use Update vs Generate
 
 **Use `update` when:**
-- ✅ Adding new functions, classes, or methods
-- ✅ Changing function signatures or parameters
-- ✅ Adding or modifying docstrings
-- ✅ Day-to-day development workflow
-- ✅ You want fast incremental updates
+- Adding new functions, classes, or methods
+- Changing function signatures or parameters
+- Adding or modifying docstrings
+- Day-to-day development workflow
+- You want fast incremental updates
 
 **Use `generate --force` when:**
-- ❌ Configuration file changed significantly
-- ❌ Troubleshooting documentation issues
-- ❌ First-time setup or complete rebuild needed
+- Configuration file changed significantly
+- Troubleshooting documentation issues
+- First-time setup or complete rebuild needed
 
 **Skip both when:**
 - Implementation-only changes (no signature/docstring changes)
