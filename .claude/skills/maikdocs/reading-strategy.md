@@ -2,6 +2,34 @@
 
 Efficient hierarchical navigation through maikdocs documentation.
 
+## ❌ Anti-Pattern: Reading Source Files First
+
+**WRONG APPROACH (wastes 15k+ tokens):**
+```
+User asks: "Find the authentication code"
+Claude:
+1. Read src/auth/auth.py (1500 tokens)
+2. Read src/auth/tokens.py (1200 tokens)
+3. Read src/auth/validator.py (1000 tokens)
+Total: 3700 tokens, didn't even find the right file yet!
+```
+
+**CORRECT APPROACH (uses 150 tokens):**
+```
+User asks: "Find the authentication code"
+Claude:
+1. Read .maik/PROJECT.md (60 tokens) → Find: auth in src/auth/
+2. Read .maik/src/auth/index_maik.md (30 tokens) → Find: authenticator.py has AuthManager
+3. maikdocs read src/auth/authenticator.py --types classes (60 tokens)
+Total: 150 tokens, found exact class with all methods!
+```
+
+**When it's OK to read source files:**
+- After using maikdocs to identify the exact file
+- When you need actual implementation logic (not structure)
+- For debugging specific code
+- User explicitly asks for a specific file
+
 ## The Hierarchy
 
 ```

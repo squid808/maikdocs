@@ -1,6 +1,6 @@
 ---
 name: maikdocs
-description: Uses maikdocs CLI Python tool for rapid, low-token codebase understanding and navigation. Generates docs before expensive code exploration, reads hierarchical documentation to save tokens, and auto-updates docs when code changes. Use when exploring codebases, making changes, or understanding project structure.
+description: FIRST STEP for codebase exploration - Use maikdocs to understand, navigate, find, and locate code BEFORE reading source files. Automatically generates hierarchical docs (PROJECT.md, index files, file summaries) saving 70-90% tokens. Essential when exploring, understanding structure, finding functions/classes, or locating code. Check maikdocs before using Read/Grep/Glob on source files. Prevents 40k+ token waste.
 allowed-tools: Bash(maikdocs:*), Bash(.venv/bin/maikdocs:*), Read, Glob, Grep
 ---
 
@@ -8,19 +8,69 @@ allowed-tools: Bash(maikdocs:*), Bash(.venv/bin/maikdocs:*), Read, Glob, Grep
 
 Efficient codebase understanding using AI-optimized documentation.
 
-## Critical Pre-Generation Check
+## ⚠️ MANDATORY: Use Maikdocs BEFORE Reading Source Files
 
-**BEFORE any expensive code navigation** (reading multiple source files):
+**STOP** before reading source files during exploration or code discovery.
 
-1. Check if `.maik/` directory exists
+**DO NOT use these tools on source files during exploration:**
+- ❌ Read tool on .py/.js/.ts/.java files (costs 1000-2000 tokens each)
+- ❌ Grep to search for functions/classes in code (maikdocs has this info)
+- ❌ Glob followed by reading multiple files (use maikdocs hierarchy instead)
+
+**ALWAYS use maikdocs first:**
+1. Check if `.maik/` exists
+2. If missing: `maikdocs init && maikdocs generate` (one-time setup)
+3. Read PROJECT.md for overview (40-80 tokens)
+4. Read index files for module navigation (20-40 tokens each)
+5. Read file docs with --types filter (50-150 tokens)
+6. Only then extract specific code or read targeted source files if needed
+
+**Token comparison:**
+- ❌ Reading 10 source files: 15,000 tokens
+- ✅ Using maikdocs: 235 tokens (98% savings)
+
+## When Should I Use Maikdocs?
+
+```
+Are you trying to:
+- Understand a codebase?
+- Find where code is located?
+- Explore project structure?
+- Locate specific functions/classes?
+- Learn what modules do?
+
+    ↓ YES to any? → USE MAIKDOCS FIRST
+
+Does .maik/ directory exist?
+├─ NO → Run: maikdocs init && maikdocs generate (saves 40k+ tokens!)
+└─ YES → Follow hierarchy:
+          1. Read .maik/PROJECT.md
+          2. Read .maik/{module}/index_maik.md
+          3. maikdocs read {file} --types classes,functions
+          4. Only if needed: maikdocs extract or Read source
+
+After using maikdocs, still need implementation details?
+├─ YES → Use `maikdocs extract --file X --sections Y`
+│        OR read specific source file (now you know which one!)
+└─ NO → You're done! Proceed with task using info from maikdocs
+```
+
+## ⚠️ MANDATORY FIRST STEP: Check for .maik/ Directory
+
+**BEFORE** reading source files, using Grep/Glob on code, or exploring:
+
+1. Check if `.maik/` directory exists: `ls -la .maik/`
 2. If missing:
    - STOP immediately
-   - Inform user: "Generating maikdocs first to save tokens..."
+   - Inform user: "Generating maikdocs to save 40k+ tokens..."
    - Run: `maikdocs init && maikdocs generate`
-   - Wait for completion before proceeding
-3. If exists, proceed with hierarchical reading strategy
+   - Wait for completion
+3. If exists, proceed with hierarchical reading
 
-This prevents 40k+ token source file reads.
+**This single step prevents:**
+- Reading 20-50 source files individually (30k-50k tokens)
+- Using Grep across entire codebase (expensive)
+- Navigating blindly without structure map
 
 ## Hierarchical Reading Strategy
 

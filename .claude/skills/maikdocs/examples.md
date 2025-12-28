@@ -6,31 +6,33 @@ Real-world scenarios for using maikdocs efficiently.
 
 **Task:** User asks "What does this project do?"
 
-**Without maikdocs (expensive):**
+**❌ WRONG (Claude bypasses maikdocs):**
 ```
 1. Read src/__init__.py (500 tokens)
 2. Read src/main.py (1200 tokens)
 3. Read src/core/app.py (1500 tokens)
 4. Read src/utils/helpers.py (800 tokens)
-Total: 4000 tokens
+Total: 4000 tokens - and still don't have full picture!
 ```
 
-**With maikdocs (efficient):**
+**✅ CORRECT (Claude uses maikdocs first):**
 ```
 1. Check for .maik/ directory
    - If missing: maikdocs init && maikdocs generate
-
 2. Read .maik/PROJECT.md (60 tokens)
-   - Project overview
-   - Module structure
-   - Key components
-
+   - Get complete project overview
+   - Understand module structure
+   - Identify key components
 3. Read .maik/src/index_maik.md (25 tokens)
-   - Module summaries
-
-4. Answer user based on overview
-Total: 85 tokens (98% reduction)
+   - See all module summaries
+4. Answer user based on comprehensive overview
+Total: 85 tokens (98% reduction!)
 ```
+
+**Why this matters:**
+- ✅ Complete understanding with 98% fewer tokens
+- ✅ Hierarchical view instead of file-by-file discovery
+- ✅ Can always drill down later if needed
 
 ## Scenario 2: Find Authentication Logic
 
